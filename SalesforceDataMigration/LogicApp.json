@@ -1,0 +1,645 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sql_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "sql-1"
+    },
+    "sql_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "Inta-dataloader-01 inta-sqla-01.database.windows.net"
+    },
+    "sql_1_server": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL server name"
+      }
+    },
+    "sql_1_database": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL database name"
+      }
+    },
+    "sql_1_username": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Username credential"
+      }
+    },
+    "sql_1_password": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password credential"
+      }
+    },
+    "sql_1_sqlConnectionString": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL Connection String"
+      }
+    },
+    "salesforce_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "salesforce"
+    },
+    "salesforce_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "Salesforce"
+    },
+    "salesforce_1_token:LoginUri": {
+      "type": "string",
+      "metadata": {
+        "description": "The Salesforce Login URI. For Production, leave blank or use https://login.salesforce.com"
+      },
+      "defaultValue": "https://test.salesforce.com"
+    },
+    "salesforce_1_salesforceApiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The Salesforce API Version. For default, leave blank or use v41.0"
+      },
+      "defaultValue": "v41"
+    },
+    "LogicAppLocation": {
+      "type": "string",
+      "minLength": 1,
+      "allowedValues": [
+        "[resourceGroup().location]",
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2",
+        "koreacentral",
+        "koreasouth",
+        "francecentral",
+        "francesouth",
+        "uaecentral",
+        "southafricanorth",
+        "southafricawest"
+      ],
+      "defaultValue": "eastus"
+    },
+    "LogicAppName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "Saleforce_Connection_Logic_App"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "Recurrence": {
+              "recurrence": {
+                "frequency": "Minute",
+                "interval": 3
+              },
+              "type": "Recurrence"
+            }
+          },
+          "actions": {
+            "For_each": {
+              "foreach": "@body('Get_records')?['value']",
+              "actions": {
+                "Insert_row_(V2)": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Contributor_Name__c": "@items('For_each')?['Contributor_Name__c']",
+                      "Contributor__c": "@items('For_each')?['Contributor__c']",
+                      "CreatedById": "@items('For_each')?['CreatedById']",
+                      "CreatedDate": "@items('For_each')?['CreatedDate']",
+                      "Id": "@items('For_each')?['Id']",
+                      "Inactive__c": "@{items('For_each')?['Inactive__c']}",
+                      "IsDeleted": "@{items('For_each')?['IsDeleted']}",
+                      "LastModifiedById": "@items('For_each')?['LastModifiedById']",
+                      "LastModifiedDate": "@items('For_each')?['LastModifiedDate']",
+                      "LastReferencedDate": "@items('For_each')?['LastReferencedDate']",
+                      "LastViewedDate": "@items('For_each')?['LastViewedDate']",
+                      "Name": "@{items('For_each')?['Name']}",
+                      "Office__c": "@items('For_each')?['Office__c']",
+                      "Organization__c": "@items('For_each')?['Organization__c']",
+                      "Original_Office__c": "@items('For_each')?['Original_Office__c']",
+                      "OwnerId": "@items('For_each')?['OwnerId']",
+                      "RH_Lev_1_GM_All__c": "@{items('For_each')?['RH_Lev_1_GM_All__c']}",
+                      "RH_Lev_2_DAS__c": "@{items('For_each')?['RH_Lev_2_DAS__c']}",
+                      "RH_Lev_3_Region_2__c": "@{items('For_each')?['RH_Lev_3_Region_2__c']}",
+                      "RH_Lev_4_Region_1__c": "@{items('For_each')?['RH_Lev_4_Region_1__c']}",
+                      "RH_Lev_5_Country__c": "@{items('For_each')?['RH_Lev_5_Country__c']}",
+                      "RH_Lev_6_Office__c": "@{items('For_each')?['RH_Lev_6_Office__c']}",
+                      "RH_Lev_7_Individual__c": "@{items('For_each')?['RH_Lev_7_Individual__c']}",
+                      "Run_As_User__c": "@{items('For_each')?['Run_As_User__c']}",
+                      "SystemModstamp": "@items('For_each')?['SystemModstamp']",
+                      "WIN_Contributor_ID__c": "@items('For_each')?['WIN_Contributor_ID__c']",
+                      "WIN_Contributor_One__c": "@{items('For_each')?['WIN_Contributor_One__c']}",
+                      "WIN__c": "@items('For_each')?['WIN__c']"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[WIN_CONTRIBUTOR_SALESFORCE]'))}/items"
+                  }
+                },
+                "Set_variable": {
+                  "runAfter": {
+                    "Insert_row_(V2)": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchDate",
+                    "value": "@items('For_each')?['LastModifiedDate']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_records": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach",
+              "runtimeConfiguration": {
+                "concurrency": {
+                  "repetitions": 1
+                }
+              }
+            },
+            "For_each_2": {
+              "foreach": "@body('Get_records_types')?['value']",
+              "actions": {
+                "Insert_row_(V2)_2": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "BusinessProcessId": "@items('For_each_2')?['BusinessProcessId']",
+                      "CreatedById": "@items('For_each_2')?['CreatedById']",
+                      "CreatedDate": "@items('For_each_2')?['CreatedDate']",
+                      "Description": "@items('For_each_2')?['Description']",
+                      "DeveloperName": "@{items('For_each_2')?['DeveloperName']}",
+                      "Id": "@{items('For_each_2')?['Id']}",
+                      "IsActive": "@{items('For_each_2')?['IsActive']}",
+                      "LastModifiedById": "@items('For_each_2')?['LastModifiedById']",
+                      "LastModifiedDate": "@items('For_each_2')?['LastModifiedDate']",
+                      "Name": "@items('For_each_2')?['Name']",
+                      "NamespacePrefix": "@items('For_each_2')?['NamespacePrefix']",
+                      "SobjectType": "@items('For_each_2')?['SobjectType']",
+                      "SystemModstamp": "@items('For_each_2')?['SystemModstamp']"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[RECORDTYPE_SALESFORCE]'))}/items"
+                  }
+                },
+                "Set_variable_2": {
+                  "runAfter": {
+                    "Insert_row_(V2)_2": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastModifiedDate",
+                    "value": "@items('For_each_2')?['LastModifiedDate']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_records_types": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach",
+              "runtimeConfiguration": {
+                "concurrency": {
+                  "repetitions": 1
+                }
+              }
+            },
+            "For_each_3": {
+              "foreach": "@body('Get_IndustryC')?['value']",
+              "actions": {
+                "Insert_row_(V2)_3": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Case_Industrial_Hierarchy__c": "@items('For_each_3')?['Case_Industrial_Hierarchy__c']",
+                      "Id": "@{items('For_each_3')?['Id']}",
+                      "Industry__c": "@items('For_each_3')?['Industry__c']",
+                      "IsDeleted": "@{items('For_each_3')?['IsDeleted']}",
+                      "Organization__c": "@items('For_each_3')?['Organization__c']",
+                      "Sector__c": "@items('For_each_3')?['Sector__c']",
+                      "Sub_Sector__c": "@items('For_each_3')?['Sub_Sector__c']",
+                      "WIN_Industrial_Hierarchy__c": "@items('For_each_3')?['WIN_Industrial_Hierarchy__c']"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[INDUSTRY__C_SALESFORCE]'))}/items"
+                  }
+                },
+                "Set_variable_3": {
+                  "runAfter": {
+                    "Insert_row_(V2)_3": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchModifiedDate",
+                    "value": "@items('For_each_3')?['LastModifiedDate']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_IndustryC": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach",
+              "runtimeConfiguration": {
+                "concurrency": {
+                  "repetitions": 1
+                }
+              }
+            },
+            "Get_IndustryC": {
+              "runAfter": {
+                "Initialize_variable_4": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Industry__c'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastFetchModifiedDate')}",
+                  "$orderby": "LastModifiedDate"
+                }
+              }
+            },
+            "Get_records": {
+              "runAfter": {
+                "Initialize_variable_2": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('WIN_Contributor__c'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastFetchDate')}",
+                  "$orderby": "LastModifiedDate"
+                }
+              }
+            },
+            "Get_records_types": {
+              "runAfter": {
+                "Initialize_variable_3": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('RecordType'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastModifiedDate')}",
+                  "$orderby": "LastModifiedDate"
+                }
+              }
+            },
+            "Get_row_(V2)": {
+              "runAfter": {
+                "Initialize_variable": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
+              }
+            },
+            "Get_row_(V2)_2": {
+              "runAfter": {
+                "Initialize_TrackerId": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
+              }
+            },
+            "Get_row_(V2)_3": {
+              "runAfter": {
+                "Initialize_Tracker": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
+              }
+            },
+            "Initialize_Tracker": {
+              "runAfter": {},
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerIdForIndustryC",
+                    "type": "string",
+                    "value": "Industry__c"
+                  }
+                ]
+              }
+            },
+            "Initialize_TrackerId": {
+              "runAfter": {},
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerIdForRecordType",
+                    "type": "string",
+                    "value": "RecordType"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable": {
+              "runAfter": {},
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerId",
+                    "type": "string",
+                    "value": "WIN_Contributor__c"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable_2": {
+              "runAfter": {
+                "Get_row_(V2)": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastFetchDate",
+                    "type": "string",
+                    "value": "@body('Get_row_(V2)')?['TrackerValue']"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable_3": {
+              "runAfter": {
+                "Get_row_(V2)_2": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastModifiedDate",
+                    "type": "string",
+                    "value": "@body('Get_row_(V2)_2')?['TrackerValue']"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable_4": {
+              "runAfter": {
+                "Get_row_(V2)_3": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastFetchModifiedDate",
+                    "type": "string",
+                    "value": "@body('Get_row_(V2)_3')?['TrackerValue']"
+                  }
+                ]
+              }
+            },
+            "Update_row_(V2)": {
+              "runAfter": {
+                "For_each": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetchDate')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
+              }
+            },
+            "Update_row_(V2)_2": {
+              "runAfter": {
+                "For_each_2": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastModifiedDate')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
+              }
+            },
+            "Update_row_(V2)_3": {
+              "runAfter": {
+                "For_each_3": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetchModifiedDate')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
+              }
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "salesforce": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'salesforce')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('salesforce_1_Connection_Name'))]",
+                "connectionName": "[parameters('salesforce_1_Connection_Name')]"
+              },
+              "sql_1": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'sql')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('sql_1_Connection_Name'))]",
+                "connectionName": "[parameters('sql_1_Connection_Name')]"
+              }
+            }
+          }
+        }
+      },
+      "name": "[parameters('LogicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('LogicAppLocation')]",
+      "tags": {
+        "displayName": "LogicApp"
+      },
+      "apiVersion": "2016-06-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', parameters('salesforce_1_Connection_Name'))]",
+        "[resourceId('Microsoft.Web/connections', parameters('sql_1_Connection_Name'))]"
+      ]
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('sql_1_Connection_Name')]",
+      "location": "eastus",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'sql')]"
+        },
+        "displayName": "[parameters('sql_1_Connection_DisplayName')]",
+        "parameterValues": {
+          "server": "[parameters('sql_1_server')]",
+          "database": "[parameters('sql_1_database')]",
+          "username": "[parameters('sql_1_username')]",
+          "password": "[parameters('sql_1_password')]",
+          "sqlConnectionString": "[parameters('sql_1_sqlConnectionString')]"
+        }
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('salesforce_1_Connection_Name')]",
+      "location": "eastus",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'salesforce')]"
+        },
+        "displayName": "[parameters('salesforce_1_Connection_DisplayName')]",
+        "nonSecretParameterValues": {
+          "token:LoginUri": "[parameters('salesforce_1_token:LoginUri')]",
+          "salesforceApiVersion": "[parameters('salesforce_1_salesforceApiVersion')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

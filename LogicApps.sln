@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SalesforceDataMigration", "SalesforceDataMigration\SalesforceDataMigration.deployproj", "{FF70DA99-9414-48BC-A3C3-71C2D1711650}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SIMAStandardLicense", "SIMAStandardLicense\SIMAStandardLicense.deployproj", "{6BC8DAE4-E896-484B-A998-50F8D0CEF589}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF70DA99-9414-48BC-A3C3-71C2D1711650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF70DA99-9414-48BC-A3C3-71C2D1711650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF70DA99-9414-48BC-A3C3-71C2D1711650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF70DA99-9414-48BC-A3C3-71C2D1711650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC8DAE4-E896-484B-A998-50F8D0CEF589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC8DAE4-E896-484B-A998-50F8D0CEF589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC8DAE4-E896-484B-A998-50F8D0CEF589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC8DAE4-E896-484B-A998-50F8D0CEF589}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {525AE109-4250-430E-AC9F-913702C377D8}
+	EndGlobalSection
+EndGlobal
