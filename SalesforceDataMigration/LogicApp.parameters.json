@@ -3,7 +3,37 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "logicAppName": {
-      "value": null
+      "value": "Saleforce_Connection_Logic_App"
+    },
+    "sql_1_server": {
+      "value": "inta-sqla-01.database.windows.net"
+    },
+    "sql_1_database": {
+      "value": "Inta-dataloader-01"
+    },
+    "sql_1_username": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/675d7977-79af-4b94-b0bd-26d4095a4ffb/resourceGroups/ITA-MSDataServices-Dev-East1/providers/Microsoft.KeyVault/vaults/ita-web-analytics-kv1"
+        },
+        "secretName": "SQLUserName"
+      }
+    },
+    "sql_1_password": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/675d7977-79af-4b94-b0bd-26d4095a4ffb/resourceGroups/ITA-MSDataServices-Dev-East1/providers/Microsoft.KeyVault/vaults/ita-web-analytics-kv1"
+        },
+        "secretName": "SQLUserPassword"
+      }
+    },
+    "sql_1_sqlConnectionString": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/675d7977-79af-4b94-b0bd-26d4095a4ffb/resourceGroups/ITA-MSDataServices-Dev-East1/providers/Microsoft.KeyVault/vaults/ita-web-analytics-kv1"
+        },
+        "secretName": "AzureSqlDatabaseConnectionString"
+      }
     }
   }
 }
