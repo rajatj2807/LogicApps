@@ -386,7 +386,7 @@
                   }
                 },
                 "method": "get",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
               }
             },
             "Get_row_(V2)_2": {
@@ -403,7 +403,7 @@
                   }
                 },
                 "method": "get",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
               }
             },
             "Get_row_(V2)_3": {
@@ -420,7 +420,7 @@
                   }
                 },
                 "method": "get",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
               }
             },
             "Initialize_Tracker": {
@@ -530,7 +530,7 @@
                   }
                 },
                 "method": "patch",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
               }
             },
             "Update_row_(V2)_2": {
@@ -550,7 +550,7 @@
                   }
                 },
                 "method": "patch",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
               }
             },
             "Update_row_(V2)_3": {
@@ -570,7 +570,7 @@
                   }
                 },
                 "method": "patch",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
               }
             }
           },

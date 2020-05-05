@@ -208,7 +208,7 @@
                   }
                 },
                 "method": "get",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('StandardLicensesTrackerId')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('StandardLicensesTrackerId')))}"
               }
             },
             "Get_items_from_sharepoint": {
@@ -279,7 +279,7 @@
                   }
                 },
                 "method": "patch",
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[SIMA_TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('StandardLicensesTrackerId')))}"
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('StandardLicensesTrackerId')))}"
               }
             }
           },
