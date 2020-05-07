@@ -14,13 +14,15 @@
       "type": "string",
       "metadata": {
         "description": "SQL server name"
-      }
+      },
+      "defaultValue": "inta-sqla-01.database.windows.net"
     },
     "sql_1_database": {
       "type": "string",
       "metadata": {
         "description": "SQL database name"
-      }
+      },
+      "defaultValue": "Inta-dataloader-01"
     },
     "sql_1_username": {
       "type": "securestring",
@@ -114,38 +116,63 @@
         "state": "Enabled",
         "definition": {
           "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "Recurrence": {
+              "recurrence": {
+                "frequency": "Minute",
+                "interval": 3
+              },
+              "type": "Recurrence"
+            }
+          },
           "actions": {
+            "Execute_a_SQL_script": {
+              "runAfter": {},
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "query": "IF OBJECT_ID(N'dbo.TRACKER', N'U') IS NULL\nBEGIN\n    CREATE TABLE TRACKER (\n\t\t[TrackerName] VARCHAR(255) PRIMARY KEY,\n\t\t[TrackerValue] VARCHAR(255)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.TRACKER', N'U') IS NOT NULL\nBEGIN\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'WIN_Contributor__c')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('WIN_Contributor__c','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'RecordType')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('RecordType','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'Industry__c')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('Industry__c','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'CASE_CONTRIBUTOR__C')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('CASE_CONTRIBUTOR__C','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'TASK')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('TASK','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'CASE')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('CASE','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'USER')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('USER','2000-01-01T00:00:00Z');\n\tEND\nEND\n\n\nIF OBJECT_ID(N'dbo.SIMA_STANDARD_STEEL_LICENSE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE SIMA_STANDARD_STEEL_LICENSE (\n\t[Account_ID] INTEGER,\n\t[ExpirationDate] DATE,\n\t[LicenseNumber] VARCHAR(255),\n\t[ApplicationDate] DATE,\n\t[HTS Code] VARCHAR(255),\n\t[ValidFromDate] DATE,\n\t[Title] VARCHAR(255),\n\t[JsonData] VARCHAR(MAX),\n\t[LicenseStatus] VARCHAR(255)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.WIN_CONTRIBUTOR_SALESFORCE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE WIN_CONTRIBUTOR_SALESFORCE (\n\t[CreatedById] VARCHAR(255),\n\t[CreatedDate] DATE,\n\t[Id] VARCHAR(255),\n\t[IsDeleted] VARCHAR(256),\n\t[LastModifiedById] VARCHAR(255),\n\t[LastModifiedDate] DATE,\n\t[LastReferencedDate] DATE,\n\t[LastViewedDate] DATE,\n\t[Name] VARCHAR(256),\n\t[OwnerId] VARCHAR(255),\n\t[SystemModstamp] VARCHAR(255),\n\t[Contributor_Name__c] VARCHAR(255),\n\t[Contributor__c] VARCHAR(256),\n\t[Inactive__c] VARCHAR(256),\n\t[Office__c] VARCHAR(256),\n\t[Organization__c] VARCHAR(255),\n\t[Original_Office__c] VARCHAR(256),\n\t[RH_Lev_1_GM_All__c] VARCHAR(256),\n\t[RH_Lev_2_DAS__c] VARCHAR(256),\n\t[RH_Lev_3_Region_2__c] VARCHAR(256),\n\t[RH_Lev_4_Region_1__c] VARCHAR(256),\n\t[RH_Lev_5_Country__c] VARCHAR(256),\n\t[RH_Lev_6_Office__c] VARCHAR(256),\n\t[RH_Lev_7_Individual__c] VARCHAR(256),\n\t[Run_As_User__c] VARCHAR(256),\n\t[WIN_Contributor_ID__c] VARCHAR(255),\n\t[WIN_Contributor_One__c]VARCHAR(255),\n\t[WIN__c] VARCHAR(255)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.RECORDTYPE_SALESFORCE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE RECORDTYPE_SALESFORCE (\n\t[BusinessProcessId] VARCHAR(255),\n\t[CreatedById] VARCHAR(255),\n\t[CreatedDate] DATE,\n\t[Description] VARCHAR(256),\n\t[DeveloperName]VARCHAR(256),\n\t[Id] VARCHAR(255),\n\t[IsActive] VARCHAR(256),\n\t[LastModifiedById] VARCHAR(255),\n\t[LastModifiedDate] DATE,\n\t[Name] VARCHAR(256),\n\t[NamespacePrefix] VARCHAR(256),\n\t[SobjectType] VARCHAR(256),\n\t[SystemModstamp] DATE,\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.INDUSTRY__C_SALESFORCE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE INDUSTRY__C_SALESFORCE (\n\t[Id] VARCHAR(255),\n\t[IsDeleted] VARCHAR(256),\n\t[Case_Industrial_Hierarchy__c] VARCHAR(256),\n\t[Industry__c] VARCHAR(256),\n\t[Organization__c] VARCHAR(256),\n\t[Sector__c] VARCHAR(256),\n\t[Sub_Sector__c] VARCHAR(256),\n\t[WIN_Industrial_Hierarchy__c] VARCHAR(255) \n\t);\nEND\n\nIF OBJECT_ID(N'dbo.CASE__C', N'U') IS NULL\nBEGIN\n\tCREATE TABLE CASE__C(\n\t[Id] VARCHAR(255),\n\t[CaseNumber]VARCHAR(256),\n\t[AccountId]VARCHAR(256),\n\t[ParentId]VARCHAR(256),\n\t[Type]VARCHAR(256),\n\t[RecordTypeId]VARCHAR(256),\n\t[Status]VARCHAR(256),\n\t[Reason]VARCHAR(256),\n\t[Subject]VARCHAR(256),\n\t[IsClosed]VARCHAR(256),\n\t[ClosedDate]VARCHAR(256),\n\t[IsEscalated]VARCHAR(256),\n\t[OwnerId]VARCHAR(255),\n\t[CreatedDate]VARCHAR(256),\n\t[Fee__c]VARCHAR(256),\n\t[Industry_Sector__c]VARCHAR(256),\n\t[Other_Countries__c]VARCHAR(256),\n\t[Primary_Country__c]VARCHAR(256),\n\t[Record_Type__c]VARCHAR(256),\n\t[Record_type_selector__c]VARCHAR(256),\n\t[Request_Case_Removal__c]VARCHAR(256),\n\t[Actual_Create_Date__c]VARCHAR(256),\n\t[Actual_Case_Closed_Date__c]VARCHAR(256)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.TASK', N'U') IS NULL\nBEGIN\n\tCREATE TABLE TASK(\n\t[Id] VARCHAR(255),\n\t[RecordTypeId]VARCHAR(255),\n\t[WhoId]VARCHAR(255),\n\t[WhatId]VARCHAR(255),\n\t[Subject]VARCHAR(256),\n\t[ActivityDate]VARCHAR(256),\n\t[Status]VARCHAR(256),\n\t[Priority]VARCHAR(256),\n\t[IsHighPriority]VARCHAR(256),\n\t[OwnerId]VARCHAR(255),\n\t[IsDeleted]VARCHAR(256),\n\t[AccountId]VARCHAR(255),\n\t[IsClosed]VARCHAR(256),\n\t[CreatedDate]VARCHAR(256),\n\t[CreatedById]VARCHAR(255),\n\t[LastModifiedDate]VARCHAR(256),\n\t[LastModifiedById]VARCHAR(256),\n\t[SystemModstamp]VARCHAR(256),\n\t[IsArchived]VARCHAR(256),\n\t[TaskSubtype]VARCHAR(256),\n\t[Investment_Promotion__c]VARCHAR(256),\n\t[RH_Lev_1_GM_All__c]VARCHAR(256),\n\t[RH_Lev_2_DAS__c]VARCHAR(256),\n\t[RH_Lev_3_Region_2__c]VARCHAR(256),\n\t[RH_Lev_4_Region_1__c]VARCHAR(256),\n\t[RH_Lev_5_Country__c]VARCHAR(256),\n\t[RH_Lev_6_Office__c]VARCHAR(256),\n\t[RH_Lev_7_Individual__c]VARCHAR(256),\n\t[Related_to_Case__c]VARCHAR(256),\n\t[eMenu_ID_c__c]VARCHAR(256),\n\t[eMenu_Org_Name__c]VARCHAR(256),\n\t[Actual_Create_Date__c]VARCHAR(256)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.CASE_CONTRIBUTOR__C', N'U') IS NULL\nBEGIN\n\tCREATE TABLE CASE_CONTRIBUTOR__C(\n\t[Id] VARCHAR(255),\n\t[CreatedDate]VARCHAR(256),\n\t[CreatedById]VARCHAR(256),\n\t[LastModifiedDate]VARCHAR(256),\n\t[LastModifiedById]VARCHAR(256),\n\t[SystemModstamp]VARCHAR(256),\n\t[Case_ID__c]VARCHAR(256),\n\t[RH_Lev_6_Office__c]VARCHAR(256),\n\t[Contributor_Name__c]VARCHAR(256),\n\t[Contributor__c]VARCHAR(256),\n\t[RH_Lev_1_GM_All__c]VARCHAR(256),\n\t[RH_Lev_2_DAS__c]VARCHAR(256),\n\t[RH_Lev_3_Region_2__c]VARCHAR(256),\n\t[RH_Lev_4_Region_1__c]VARCHAR(256),\n\t[RH_Lev_5_Country__c]VARCHAR(256),\n\t[RH_Lev_7_Individual__c]VARCHAR(256)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.USER__C', N'U') IS NULL\nBEGIN\n\tCREATE TABLE USER__C( \n\t[Id] VARCHAR(255),\n\t[Username]VARCHAR(256),\n\t[LastName]VARCHAR(256),\n\t[FirstName]VARCHAR(256),\n\t[Name]VARCHAR(256),\n\t[CompanyName]VARCHAR(256),\n\t[Division]VARCHAR(256),\n\t[Department]VARCHAR(256),\n\t[Title]VARCHAR(256),\n\t[Street]VARCHAR(256),\n\t[City]VARCHAR(256),\n\t[State]VARCHAR(256),\n\t[PostalCode]VARCHAR(256),\n\t[Country]VARCHAR(256),\n\t[Alias]VARCHAR(256),\n\t[CommunityNickname]VARCHAR(256),\n\t[IsActive]VARCHAR(256),\n\t[UserRoleId]VARCHAR(256),\n\t[ProfileId]VARCHAR(256),\n\t[UserType]VARCHAR(256),\n\t);\nEND\n\n"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/query/sql"
+              }
+            },
             "For_each": {
-              "type": "Foreach",
               "foreach": "@body('Get_records')?['value']",
               "actions": {
                 "Insert_row_(V2)": {
+                  "runAfter": {},
                   "type": "ApiConnection",
                   "inputs": {
-                    "host": {
-                      "connection": {
-                        "name": "@parameters('$connections')['sql_1']['connectionId']"
-                      }
-                    },
-                    "method": "post",
                     "body": {
+                      "Contributor_Name__c": "@items('For_each')?['Contributor_Name__c']",
+                      "Contributor__c": "@items('For_each')?['Contributor__c']",
                       "CreatedById": "@items('For_each')?['CreatedById']",
                       "CreatedDate": "@items('For_each')?['CreatedDate']",
                       "Id": "@items('For_each')?['Id']",
+                      "Inactive__c": "@{items('For_each')?['Inactive__c']}",
                       "IsDeleted": "@{items('For_each')?['IsDeleted']}",
                       "LastModifiedById": "@items('For_each')?['LastModifiedById']",
                       "LastModifiedDate": "@items('For_each')?['LastModifiedDate']",
                       "LastReferencedDate": "@items('For_each')?['LastReferencedDate']",
                       "LastViewedDate": "@items('For_each')?['LastViewedDate']",
                       "Name": "@{items('For_each')?['Name']}",
-                      "OwnerId": "@items('For_each')?['OwnerId']",
-                      "SystemModstamp": "@items('For_each')?['SystemModstamp']",
-                      "Contributor_Name__c": "@items('For_each')?['Contributor_Name__c']",
-                      "Contributor__c": "@items('For_each')?['Contributor__c']",
-                      "Inactive__c": "@{items('For_each')?['Inactive__c']}",
                       "Office__c": "@items('For_each')?['Office__c']",
                       "Organization__c": "@items('For_each')?['Organization__c']",
                       "Original_Office__c": "@items('For_each')?['Original_Office__c']",
+                      "OwnerId": "@items('For_each')?['OwnerId']",
                       "RH_Lev_1_GM_All__c": "@{items('For_each')?['RH_Lev_1_GM_All__c']}",
                       "RH_Lev_2_DAS__c": "@{items('For_each')?['RH_Lev_2_DAS__c']}",
                       "RH_Lev_3_Region_2__c": "@{items('For_each')?['RH_Lev_3_Region_2__c']}",
@@ -154,24 +181,30 @@
                       "RH_Lev_6_Office__c": "@{items('For_each')?['RH_Lev_6_Office__c']}",
                       "RH_Lev_7_Individual__c": "@{items('For_each')?['RH_Lev_7_Individual__c']}",
                       "Run_As_User__c": "@{items('For_each')?['Run_As_User__c']}",
+                      "SystemModstamp": "@items('For_each')?['SystemModstamp']",
                       "WIN_Contributor_ID__c": "@items('For_each')?['WIN_Contributor_ID__c']",
                       "WIN_Contributor_One__c": "@{items('For_each')?['WIN_Contributor_One__c']}",
                       "WIN__c": "@items('For_each')?['WIN__c']"
                     },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[WIN_CONTRIBUTOR_SALESFORCE]'))}/items"
-                  },
-                  "runAfter": {}
+                  }
                 },
                 "Set_variable": {
-                  "type": "SetVariable",
-                  "inputs": {
-                    "name": "LastFetchDate",
-                    "value": "@items('For_each')?['LastModifiedDate']"
-                  },
                   "runAfter": {
                     "Insert_row_(V2)": [
                       "Succeeded"
                     ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchDate",
+                    "value": "@items('For_each')?['LastModifiedDate']"
                   }
                 }
               },
@@ -180,6 +213,7 @@
                   "Succeeded"
                 ]
               },
+              "type": "Foreach",
               "runtimeConfiguration": {
                 "concurrency": {
                   "repetitions": 1
@@ -187,18 +221,12 @@
               }
             },
             "For_each_2": {
-              "type": "Foreach",
               "foreach": "@body('Get_records_types')?['value']",
               "actions": {
                 "Insert_row_(V2)_2": {
+                  "runAfter": {},
                   "type": "ApiConnection",
                   "inputs": {
-                    "host": {
-                      "connection": {
-                        "name": "@parameters('$connections')['sql_1']['connectionId']"
-                      }
-                    },
-                    "method": "post",
                     "body": {
                       "BusinessProcessId": "@items('For_each_2')?['BusinessProcessId']",
                       "CreatedById": "@items('For_each_2')?['CreatedById']",
@@ -214,20 +242,25 @@
                       "SobjectType": "@items('For_each_2')?['SobjectType']",
                       "SystemModstamp": "@items('For_each_2')?['SystemModstamp']"
                     },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[RECORDTYPE_SALESFORCE]'))}/items"
-                  },
-                  "runAfter": {}
+                  }
                 },
                 "Set_variable_2": {
-                  "type": "SetVariable",
-                  "inputs": {
-                    "name": "LastModifiedDate",
-                    "value": "@items('For_each_2')?['LastModifiedDate']"
-                  },
                   "runAfter": {
                     "Insert_row_(V2)_2": [
                       "Succeeded"
                     ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastModifiedDate",
+                    "value": "@items('For_each_2')?['LastModifiedDate']"
                   }
                 }
               },
@@ -236,6 +269,7 @@
                   "Succeeded"
                 ]
               },
+              "type": "Foreach",
               "runtimeConfiguration": {
                 "concurrency": {
                   "repetitions": 1
@@ -243,42 +277,41 @@
               }
             },
             "For_each_3": {
-              "type": "Foreach",
               "foreach": "@body('Get_IndustryC')?['value']",
               "actions": {
                 "Insert_row_(V2)_3": {
+                  "runAfter": {},
                   "type": "ApiConnection",
                   "inputs": {
+                    "body": {
+                      "Case_Industrial_Hierarchy__c": "@items('For_each_3')?['Case_Industrial_Hierarchy__c']",
+                      "Id": "@{items('For_each_3')?['Id']}",
+                      "Industry__c": "@items('For_each_3')?['Industry__c']",
+                      "IsDeleted": "@{items('For_each_3')?['IsDeleted']}",
+                      "Organization__c": "@items('For_each_3')?['Organization__c']",
+                      "Sector__c": "@items('For_each_3')?['Sector__c']",
+                      "Sub_Sector__c": "@items('For_each_3')?['Sub_Sector__c']",
+                      "WIN_Industrial_Hierarchy__c": "@items('For_each_3')?['WIN_Industrial_Hierarchy__c']"
+                    },
                     "host": {
                       "connection": {
                         "name": "@parameters('$connections')['sql_1']['connectionId']"
                       }
                     },
                     "method": "post",
-                    "body": {
-                      "Id": "@{items('For_each_3')?['Id']}",
-                      "IsDeleted": "@{items('For_each_3')?['IsDeleted']}",
-                      "Case_Industrial_Hierarchy__c": "@items('For_each_3')?['Case_Industrial_Hierarchy__c']",
-                      "Industry__c": "@items('For_each_3')?['Industry__c']",
-                      "Organization__c": "@items('For_each_3')?['Organization__c']",
-                      "Sector__c": "@items('For_each_3')?['Sector__c']",
-                      "Sub_Sector__c": "@items('For_each_3')?['Sub_Sector__c']",
-                      "WIN_Industrial_Hierarchy__c": "@items('For_each_3')?['WIN_Industrial_Hierarchy__c']"
-                    },
                     "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[INDUSTRY__C_SALESFORCE]'))}/items"
-                  },
-                  "runAfter": {}
+                  }
                 },
                 "Set_variable_3": {
-                  "type": "SetVariable",
-                  "inputs": {
-                    "name": "LastFetchModifiedDate",
-                    "value": "@items('For_each_3')?['LastModifiedDate']"
-                  },
                   "runAfter": {
                     "Insert_row_(V2)_3": [
                       "Succeeded"
                     ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchModifiedDate",
+                    "value": "@items('For_each_3')?['LastModifiedDate']"
                   }
                 }
               },
@@ -287,13 +320,304 @@
                   "Succeeded"
                 ]
               },
+              "type": "Foreach",
               "runtimeConfiguration": {
                 "concurrency": {
                   "repetitions": 1
                 }
               }
             },
+            "For_each_4": {
+              "foreach": "@body('Get_Tasks')?['value']",
+              "actions": {
+                "Insert_row_(V2)_4": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "AccountId": "@{items('For_each_4')?['AccountId']}",
+                      "ActivityDate": "@{items('For_each_4')?['ActivityDate']}",
+                      "Actual_Create_Date__c": "@{items('For_each_4')?['Actual_Create_Date_c']}",
+                      "CreatedById": "@{items('For_each_4')?['CreatedById']}",
+                      "CreatedDate": "@{items('For_each_4')?['CreatedDate']}",
+                      "Id": "@{items('For_each_4')?['Id']}",
+                      "Investment_Promotion__c": "@{items('For_each_4')?['Investment_Promotion__c']}",
+                      "IsArchived": "@{items('For_each_4')?['IsArchived']}",
+                      "IsClosed": "@{items('For_each_4')?['IsClosed']}",
+                      "IsDeleted": "@{items('For_each_4')?['IsDeleted']}",
+                      "IsHighPriority": "@{items('For_each_4')?['IsHighPriority']}",
+                      "LastModifiedById": "@{items('For_each_4')?['LastModifiedById']}",
+                      "LastModifiedDate": "@{items('For_each_4')?['LastModifiedDate']}",
+                      "OwnerId": "@{items('For_each_4')?['OwnerId']}",
+                      "Priority": "@{items('For_each_4')?['Priority']}",
+                      "RH_Lev_1_GM_All__c": "@{items('For_each_4')?['RH_Lev_1_GM_All__c']}",
+                      "RH_Lev_2_DAS__c": "@{items('For_each_4')?['Status']\r\n}",
+                      "RH_Lev_3_Region_2__c": "@{items('For_each_4')?['RH_Lev_3_Region_2__c']}",
+                      "RH_Lev_4_Region_1__c": "@{items('For_each_4')?['RH_Lev_4_Region_1__c']}",
+                      "RH_Lev_5_Country__c": "@{items('For_each_4')?['RH_Lev_5_Country__c']}",
+                      "RH_Lev_6_Office__c": "@{items('For_each_4')?['RH_Lev_6_Office__c']}",
+                      "RH_Lev_7_Individual__c": "@{items('For_each_4')?['RH_Lev_7_Individual__c']}",
+                      "RecordTypeId": "@{items('For_each_4')?['RecordTypeId']}",
+                      "Related_to_Case__c": "@{items('For_each_4')?['Related_to_Case__c']}",
+                      "Status": "@{items('For_each_4')?['Status']}",
+                      "Subject": "@{items('For_each_4')?['Subject']}",
+                      "SystemModstamp": "@{items('For_each_4')?['SystemModstamp']}",
+                      "TaskSubtype": "@{items('For_each_4')?['TaskSubtype']}",
+                      "WhatId": "@{items('For_each_4')?['WhatId']}",
+                      "WhoId": "@{items('For_each_4')?['WhoId']}",
+                      "eMenu_ID_c__c": "@{items('For_each_4')?['eMenu_Org_Name__c']}",
+                      "eMenu_Org_Name__c": "@{items('For_each_4')?['eMenu_Org_Name__c']}"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TASK]'))}/items"
+                  }
+                },
+                "Set_variable_5": {
+                  "runAfter": {
+                    "Insert_row_(V2)_4": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchModifyForTask",
+                    "value": "@{items('For_each_4')?['LastModifiedDate']}"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_Tasks": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach"
+            },
+            "For_each_5": {
+              "foreach": "@body('Get_Users')?['value']",
+              "actions": {
+                "Insert_row_(V2)_5": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Alias": "@items('For_each_5')?['Alias']",
+                      "City": "@items('For_each_5')?['City']",
+                      "CommunityNickname": "@items('For_each_5')?['CommunityNickname']",
+                      "CompanyName": "@items('For_each_5')?['CompanyName']",
+                      "Country": "@items('For_each_5')?['Country']",
+                      "Department": "@items('For_each_5')?['Department']",
+                      "Division": "@items('For_each_5')?['Division']",
+                      "FirstName": "@items('For_each_5')?['FirstName']",
+                      "Id": "@{items('For_each_5')?['Id']}",
+                      "IsActive": "@{items('For_each_5')?['IsActive']}",
+                      "LastName": "@items('For_each_5')?['LastName']",
+                      "Name": "@items('For_each_5')?['Name']",
+                      "PostalCode": "@items('For_each_5')?['PostalCode']",
+                      "ProfileId": "@items('For_each_5')?['ProfileId']",
+                      "State": "@items('For_each_5')?['State']",
+                      "Street": "@items('For_each_5')?['Street']",
+                      "Title": "@items('For_each_5')?['Title']",
+                      "UserRoleId": "@items('For_each_5')?['UserRoleId']",
+                      "UserType": "@items('For_each_5')?['UserType']",
+                      "Username": "@items('For_each_5')?['Username']"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[USER__C]'))}/items"
+                  }
+                },
+                "Set_variable_4": {
+                  "runAfter": {
+                    "Insert_row_(V2)_5": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetcgModifyForUser",
+                    "value": "@items('For_each_5')?['LastModifiedDate']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_Users": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach"
+            },
+            "For_each_6": {
+              "foreach": "@body('Get_Case_Contributors')?['value']",
+              "actions": {
+                "Insert_row_(V2)_6": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Case_ID__c": "@items('For_each_6')?['Case_ID__c']",
+                      "Contributor_Name__c": "@items('For_each_6')?['Contributor_Name__c']",
+                      "Contributor__c": "@items('For_each_6')?['Contributor__c']",
+                      "CreatedById": "@items('For_each_6')?['CreatedById']",
+                      "CreatedDate": "@items('For_each_6')?['CreatedDate']",
+                      "Id": "@{items('For_each_6')?['Id']}",
+                      "LastModifiedById": "@items('For_each_6')?['LastModifiedById']",
+                      "LastModifiedDate": "@items('For_each_6')?['LastModifiedDate']",
+                      "RH_Lev_1_GM_All__c": "@{items('For_each_6')?['RH_Lev_1_GM_All__c']}",
+                      "RH_Lev_2_DAS__c": "@{items('For_each_6')?['RH_Lev_2_DAS__c']}",
+                      "RH_Lev_3_Region_2__c": "@{items('For_each_6')?['RH_Lev_3_Region_2__c']}",
+                      "RH_Lev_4_Region_1__c": "@{items('For_each_6')?['RH_Lev_4_Region_1__c']}",
+                      "RH_Lev_5_Country__c": "@{items('For_each_6')?['RH_Lev_5_Country__c']}",
+                      "RH_Lev_6_Office__c": "@{items('For_each_6')?['RH_Lev_6_Office__c']}",
+                      "RH_Lev_7_Individual__c": "@{items('For_each_6')?['RH_Lev_7_Individual__c']}",
+                      "SystemModstamp": "@items('For_each_6')?['SystemModstamp']"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[CASE_CONTRIBUTOR__C]'))}/items"
+                  }
+                },
+                "Set_variable_6": {
+                  "runAfter": {
+                    "Insert_row_(V2)_6": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchModifiedForCaseContributors",
+                    "value": "@items('For_each_6')?['LastModifiedDate']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_Case_Contributors": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach"
+            },
+            "For_each_7": {
+              "foreach": "@body('Get_Cases')?['value']",
+              "actions": {
+                "Insert_row_(V2)_7": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "AccountId": "@{items('For_each_7')?['AccountId']}",
+                      "Actual_Case_Closed_Date__c": "@items('For_each_7')?['Actual_Case_Closed_Date__c']",
+                      "Actual_Create_Date__c": "@items('For_each_7')?['Actual_Create_Date__c']",
+                      "CaseNumber": "@items('For_each_7')?['CaseNumber']",
+                      "ClosedDate": "@items('For_each_7')?['ClosedDate']",
+                      "CreatedDate": "@items('For_each_7')?['CreatedDate']",
+                      "Fee__c": "@items('For_each_7')?['Fee__c']",
+                      "Id": "@{items('For_each_7')?['Id']}",
+                      "Industry_Sector__c": "@{items('For_each_7')?['Industry_Sector__c']}",
+                      "IsClosed": "@{items('For_each_7')?['IsClosed']}",
+                      "IsEscalated": "@{items('For_each_7')?['IsEscalated']}",
+                      "Other_Countries__c": "@{items('For_each_7')?['Other_Countries__c']}",
+                      "OwnerId": "@items('For_each_7')?['OwnerId']",
+                      "ParentId": "@{items('For_each_7')?['ParentId']}",
+                      "Primary_Country__c": "@{items('For_each_7')?['Primary_Country__c']}",
+                      "Reason": "@items('For_each_7')?['Reason']",
+                      "RecordTypeId": "@items('For_each_7')?['RecordTypeId']",
+                      "Record_Type__c": "@{items('For_each_7')?['Record_Type__c']}",
+                      "Record_type_selector__c": "@{items('For_each_7')?['Record_type_selector__c']}",
+                      "Request_Case_Removal__c": "@{items('For_each_7')?['Request_Case_Removal__c']}",
+                      "Status": "@items('For_each_7')?['Status']",
+                      "Subject": "@items('For_each_7')?['Subject']",
+                      "Type": "@{items('For_each_7')?['Type']}"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sql_1']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[CASE__C]'))}/items"
+                  }
+                },
+                "Set_variable_7": {
+                  "runAfter": {
+                    "Insert_row_(V2)_7": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "LastFetchModifiedForCase",
+                    "value": "@items('For_each_7')?['LastModifiedDate']"
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_Cases": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Foreach"
+            },
+            "Get_Case_Contributors": {
+              "runAfter": {
+                "Initialize_variable_6": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Case_Contributor__c'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastFetchModifiedForCaseContributors')}",
+                  "$orderby": "LastModifiedDate "
+                }
+              }
+            },
+            "Get_Cases": {
+              "runAfter": {
+                "Initialize_variable_8": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Case'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastFetchModifiedForCase')}",
+                  "$orderby": "LastModifiedDate"
+                }
+              }
+            },
             "Get_IndustryC": {
+              "runAfter": {
+                "Initialize_variable_4": [
+                  "Succeeded"
+                ]
+              },
               "type": "ApiConnection",
               "inputs": {
                 "host": {
@@ -307,14 +631,73 @@
                   "$filter": "LastModifiedDate gt @{variables('LastFetchModifiedDate')}",
                   "$orderby": "LastModifiedDate"
                 }
-              },
+              }
+            },
+            "Get_Tasks": {
               "runAfter": {
-                "Initialize_variable_4": [
+                "Initialize_LastFetchModifyForTask": [
                   "Succeeded"
                 ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Task'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastFetchModifyForTask')}",
+                  "$orderby": "LastModifiedDate "
+                }
+              }
+            },
+            "Get_Tracker_row_": {
+              "runAfter": {
+                "Initialize_Tracker_variable": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForTask')))}"
+              }
+            },
+            "Get_Users": {
+              "runAfter": {
+                "Initialize_LastFetcgModifyForUser": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['salesforce']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('User'))}/items",
+                "queries": {
+                  "$filter": "LastModifiedDate gt @{variables('LastFetcgModifyForUser')}",
+                  "$orderby": "LastModifiedDate "
+                }
               }
             },
             "Get_records": {
+              "runAfter": {
+                "Initialize_variable_2": [
+                  "Succeeded"
+                ]
+              },
               "type": "ApiConnection",
               "inputs": {
                 "host": {
@@ -328,14 +711,14 @@
                   "$filter": "LastModifiedDate gt @{variables('LastFetchDate')}",
                   "$orderby": "LastModifiedDate"
                 }
-              },
-              "runAfter": {
-                "Initialize_variable_2": [
-                  "Succeeded"
-                ]
               }
             },
             "Get_records_types": {
+              "runAfter": {
+                "Initialize_variable_3": [
+                  "Succeeded"
+                ]
+              },
               "type": "ApiConnection",
               "inputs": {
                 "host": {
@@ -349,14 +732,14 @@
                   "$filter": "LastModifiedDate gt @{variables('LastModifiedDate')}",
                   "$orderby": "LastModifiedDate"
                 }
-              },
-              "runAfter": {
-                "Initialize_variable_3": [
-                  "Succeeded"
-                ]
               }
             },
             "Get_row_(V2)": {
+              "runAfter": {
+                "Initialize_variable": [
+                  "Succeeded"
+                ]
+              },
               "type": "ApiConnection",
               "inputs": {
                 "host": {
@@ -366,14 +749,14 @@
                 },
                 "method": "get",
                 "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
-              },
-              "runAfter": {
-                "Initialize_variable": [
-                  "Succeeded"
-                ]
               }
             },
             "Get_row_(V2)_2": {
+              "runAfter": {
+                "Initialize_TrackerId": [
+                  "Succeeded"
+                ]
+              },
               "type": "ApiConnection",
               "inputs": {
                 "host": {
@@ -383,14 +766,14 @@
                 },
                 "method": "get",
                 "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
-              },
-              "runAfter": {
-                "Initialize_TrackerId": [
-                  "Succeeded"
-                ]
               }
             },
             "Get_row_(V2)_3": {
+              "runAfter": {
+                "Initialize_Tracker": [
+                  "Succeeded"
+                ]
+              },
               "type": "ApiConnection",
               "inputs": {
                 "host": {
@@ -400,14 +783,99 @@
                 },
                 "method": "get",
                 "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
-              },
+              }
+            },
+            "Get_row_(V2)_4": {
               "runAfter": {
-                "Initialize_Tracker": [
+                "Initialize_Tracker_variable_": [
                   "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForUsers')))}"
+              }
+            },
+            "Get_row_(V2)_5": {
+              "runAfter": {
+                "Initialize_variable_5": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForCaseContributors')))}"
+              }
+            },
+            "Get_row_(V2)_6": {
+              "runAfter": {
+                "Initialize_variable_7": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForCases')))}"
+              }
+            },
+            "Initialize_LastFetcgModifyForUser": {
+              "runAfter": {
+                "Get_row_(V2)_4": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastFetcgModifyForUser",
+                    "type": "string",
+                    "value": "@body('Get_row_(V2)_4')?['TrackerValue']"
+                  }
+                ]
+              }
+            },
+            "Initialize_LastFetchModifyForTask": {
+              "runAfter": {
+                "Get_Tracker_row_": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastFetchModifyForTask",
+                    "type": "string",
+                    "value": "@body('Get_Tracker_row_')?['TrackerValue']"
+                  }
                 ]
               }
             },
             "Initialize_Tracker": {
+              "runAfter": {
+                "Execute_a_SQL_script": [
+                  "Succeeded"
+                ]
+              },
               "type": "InitializeVariable",
               "inputs": {
                 "variables": [
@@ -417,14 +885,14 @@
                     "value": "Industry__c"
                   }
                 ]
-              },
+              }
+            },
+            "Initialize_TrackerId": {
               "runAfter": {
                 "Execute_a_SQL_script": [
                   "Succeeded"
                 ]
-              }
-            },
-            "Initialize_TrackerId": {
+              },
               "type": "InitializeVariable",
               "inputs": {
                 "variables": [
@@ -434,14 +902,48 @@
                     "value": "RecordType"
                   }
                 ]
-              },
+              }
+            },
+            "Initialize_Tracker_variable": {
               "runAfter": {
                 "Execute_a_SQL_script": [
                   "Succeeded"
                 ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerIdForTask",
+                    "type": "string",
+                    "value": "TASK"
+                  }
+                ]
+              }
+            },
+            "Initialize_Tracker_variable_": {
+              "runAfter": {
+                "Execute_a_SQL_script": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerIdForUsers",
+                    "type": "string",
+                    "value": "USER"
+                  }
+                ]
               }
             },
             "Initialize_variable": {
+              "runAfter": {
+                "Execute_a_SQL_script": [
+                  "Succeeded"
+                ]
+              },
               "type": "InitializeVariable",
               "inputs": {
                 "variables": [
@@ -451,14 +953,14 @@
                     "value": "WIN_Contributor__c"
                   }
                 ]
-              },
-              "runAfter": {
-                "Execute_a_SQL_script": [
-                  "Succeeded"
-                ]
               }
             },
             "Initialize_variable_2": {
+              "runAfter": {
+                "Get_row_(V2)": [
+                  "Succeeded"
+                ]
+              },
               "type": "InitializeVariable",
               "inputs": {
                 "variables": [
@@ -468,14 +970,14 @@
                     "value": "@body('Get_row_(V2)')?['TrackerValue']"
                   }
                 ]
-              },
-              "runAfter": {
-                "Get_row_(V2)": [
-                  "Succeeded"
-                ]
               }
             },
             "Initialize_variable_3": {
+              "runAfter": {
+                "Get_row_(V2)_2": [
+                  "Succeeded"
+                ]
+              },
               "type": "InitializeVariable",
               "inputs": {
                 "variables": [
@@ -485,14 +987,14 @@
                     "value": "@body('Get_row_(V2)_2')?['TrackerValue']"
                   }
                 ]
-              },
-              "runAfter": {
-                "Get_row_(V2)_2": [
-                  "Succeeded"
-                ]
               }
             },
             "Initialize_variable_4": {
+              "runAfter": {
+                "Get_row_(V2)_3": [
+                  "Succeeded"
+                ]
+              },
               "type": "InitializeVariable",
               "inputs": {
                 "variables": [
@@ -502,188 +1004,231 @@
                     "value": "@body('Get_row_(V2)_3')?['TrackerValue']"
                   }
                 ]
-              },
+              }
+            },
+            "Initialize_variable_5": {
               "runAfter": {
-                "Get_row_(V2)_3": [
+                "Execute_a_SQL_script": [
                   "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerIdForCaseContributors",
+                    "type": "string",
+                    "value": "CASE_CONTRIBUTOR__C"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable_6": {
+              "runAfter": {
+                "Get_row_(V2)_5": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastFetchModifiedForCaseContributors",
+                    "type": "string",
+                    "value": "@body('Get_row_(V2)_5')?['TrackerValue']"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable_7": {
+              "runAfter": {
+                "Execute_a_SQL_script": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "TrackerIdForCases",
+                    "type": "string",
+                    "value": "CASE"
+                  }
+                ]
+              }
+            },
+            "Initialize_variable_8": {
+              "runAfter": {
+                "Get_row_(V2)_6": [
+                  "Succeeded"
+                ]
+              },
+              "type": "InitializeVariable",
+              "inputs": {
+                "variables": [
+                  {
+                    "name": "LastFetchModifiedForCase",
+                    "type": "string",
+                    "value": "@body('Get_row_(V2)_6')?['TrackerValue']"
+                  }
                 ]
               }
             },
             "Update_row_(V2)": {
-              "type": "ApiConnection",
-              "inputs": {
-                "host": {
-                  "connection": {
-                    "name": "@parameters('$connections')['sql_1']['connectionId']"
-                  }
-                },
-                "method": "patch",
-                "body": {
-                  "TrackerValue": "@variables('LastFetchDate')"
-                },
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
-              },
               "runAfter": {
                 "For_each": [
                   "Succeeded"
                 ]
-              }
-            },
-            "Update_row_(V2)_2": {
+              },
               "type": "ApiConnection",
               "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetchDate')"
+                },
                 "host": {
                   "connection": {
                     "name": "@parameters('$connections')['sql_1']['connectionId']"
                   }
                 },
                 "method": "patch",
-                "body": {
-                  "TrackerValue": "@variables('LastModifiedDate')"
-                },
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
-              },
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerId')))}"
+              }
+            },
+            "Update_row_(V2)_2": {
               "runAfter": {
                 "For_each_2": [
                   "Succeeded"
                 ]
-              }
-            },
-            "Update_row_(V2)_3": {
+              },
               "type": "ApiConnection",
               "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastModifiedDate')"
+                },
                 "host": {
                   "connection": {
                     "name": "@parameters('$connections')['sql_1']['connectionId']"
                   }
                 },
                 "method": "patch",
-                "body": {
-                  "TrackerValue": "@variables('LastFetchModifiedDate')"
-                },
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
-              },
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForRecordType')))}"
+              }
+            },
+            "Update_row_(V2)_3": {
               "runAfter": {
                 "For_each_3": [
                   "Succeeded"
                 ]
-              }
-            },
-            "Get_records_2": {
-              "type": "ApiConnection",
-              "inputs": {
-                "host": {
-                  "connection": {
-                    "name": "@parameters('$connections')['salesforce']['connectionId']"
-                  }
-                },
-                "method": "get",
-                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Case'))}/items"
               },
-              "runAfter": {
-                "Execute_a_SQL_script": [
-                  "Succeeded"
-                ]
-              }
-            },
-            "Get_records_3": {
               "type": "ApiConnection",
               "inputs": {
-                "host": {
-                  "connection": {
-                    "name": "@parameters('$connections')['salesforce']['connectionId']"
-                  }
+                "body": {
+                  "TrackerValue": "@variables('LastFetchModifiedDate')"
                 },
-                "method": "get",
-                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Task'))}/items"
-              },
-              "runAfter": {
-                "Execute_a_SQL_script": [
-                  "Succeeded"
-                ]
-              }
-            },
-            "Get_records_4": {
-              "type": "ApiConnection",
-              "inputs": {
-                "host": {
-                  "connection": {
-                    "name": "@parameters('$connections')['salesforce']['connectionId']"
-                  }
-                },
-                "method": "get",
-                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Case_Contributor__c'))}/items"
-              },
-              "runAfter": {
-                "Execute_a_SQL_script": [
-                  "Succeeded"
-                ]
-              }
-            },
-            "Get_records_5": {
-              "type": "ApiConnection",
-              "inputs": {
-                "host": {
-                  "connection": {
-                    "name": "@parameters('$connections')['salesforce']['connectionId']"
-                  }
-                },
-                "method": "get",
-                "path": "/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('User'))}/items"
-              },
-              "runAfter": {
-                "Execute_a_SQL_script": [
-                  "Succeeded"
-                ]
-              }
-            },
-            "Execute_a_SQL_script": {
-              "type": "ApiConnection",
-              "inputs": {
                 "host": {
                   "connection": {
                     "name": "@parameters('$connections')['sql_1']['connectionId']"
                   }
                 },
-                "method": "post",
-                "body": {
-                  "query": "IF OBJECT_ID(N'dbo.TRACKER', N'U') IS NULL\nBEGIN\n    CREATE TABLE TRACKER (\n\t\t[TrackerName] VARCHAR(255) PRIMARY KEY,\n\t\t[TrackerValue] VARCHAR(255)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.TRACKER', N'U') IS NOT NULL\nBEGIN\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'WIN_Contributor__c')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('WIN_Contributor__c','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'RecordType')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('RecordType','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'Industry__c')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('Industry__c','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'CASE_CONTRIBUTOR__C')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('CASE_CONTRIBUTOR__C','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'TASK')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('TASK','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'CASE')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('CASE','2000-01-01T00:00:00Z');\n\tEND\n\t\n\tIF NOT EXISTS (SELECT 1 FROM dbo.TRACKER WHERE TrackerName = N'USER')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('USER','2000-01-01T00:00:00Z');\n\tEND\nEND\n\n\nIF OBJECT_ID(N'dbo.SIMA_STANDARD_STEEL_LICENSE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE SIMA_STANDARD_STEEL_LICENSE (\n\t[Account_ID] INTEGER,\n\t[ExpirationDate] DATE,\n\t[LicenseNumber] VARCHAR(255),\n\t[ApplicationDate] DATE,\n\t[HTS Code] VARCHAR(255),\n\t[ValidFromDate] DATE,\n\t[Title] VARCHAR(255),\n\t[JsonData] VARCHAR(MAX),\n\t[LicenseStatus] VARCHAR(255)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.WIN_CONTRIBUTOR_SALESFORCE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE WIN_CONTRIBUTOR_SALESFORCE (\n\t[CreatedById] VARCHAR(255),\n\t[CreatedDate] DATE,\n\t[Id] VARCHAR(255),\n\t[IsDeleted] VARCHAR(256),\n\t[LastModifiedById] VARCHAR(255),\n\t[LastModifiedDate] DATE,\n\t[LastReferencedDate] DATE,\n\t[LastViewedDate] DATE,\n\t[Name] VARCHAR(256),\n\t[OwnerId] VARCHAR(255),\n\t[SystemModstamp] VARCHAR(255),\n\t[Contributor_Name__c] VARCHAR(255),\n\t[Contributor__c] VARCHAR(256),\n\t[Inactive__c] VARCHAR(256),\n\t[Office__c] VARCHAR(256),\n\t[Organization__c] VARCHAR(255),\n\t[Original_Office__c] VARCHAR(256),\n\t[RH_Lev_1_GM_All__c] VARCHAR(256),\n\t[RH_Lev_2_DAS__c] VARCHAR(256),\n\t[RH_Lev_3_Region_2__c] VARCHAR(256),\n\t[RH_Lev_4_Region_1__c] VARCHAR(256),\n\t[RH_Lev_5_Country__c] VARCHAR(256),\n\t[RH_Lev_6_Office__c] VARCHAR(256),\n\t[RH_Lev_7_Individual__c] VARCHAR(256),\n\t[Run_As_User__c] VARCHAR(256),\n\t[WIN_Contributor_ID__c] VARCHAR(255),\n\t[WIN_Contributor_One__c]VARCHAR(255),\n\t[WIN__c] VARCHAR(255)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.RECORDTYPE_SALESFORCE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE RECORDTYPE_SALESFORCE (\n\t[BusinessProcessId] VARCHAR(255),\n\t[CreatedById] VARCHAR(255),\n\t[CreatedDate] DATE,\n\t[Description] VARCHAR(256),\n\t[DeveloperName]VARCHAR(256),\n\t[Id] VARCHAR(255),\n\t[IsActive] VARCHAR(256),\n\t[LastModifiedById] VARCHAR(255),\n\t[LastModifiedDate] DATE,\n\t[Name] VARCHAR(256),\n\t[NamespacePrefix] VARCHAR(256),\n\t[SobjectType] VARCHAR(256),\n\t[SystemModstamp] DATE,\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.INDUSTRY__C_SALESFORCE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE INDUSTRY__C_SALESFORCE (\n\t[Id] VARCHAR(255),\n\t[IsDeleted] VARCHAR(256),\n\t[Case_Industrial_Hierarchy__c] VARCHAR(256),\n\t[Industry__c] VARCHAR(256),\n\t[Organization__c] VARCHAR(256),\n\t[Sector__c] VARCHAR(256),\n\t[Sub_Sector__c] VARCHAR(256),\n\t[WIN_Industrial_Hierarchy__c] VARCHAR(255) \n\t);\nEND\n\nIF OBJECT_ID(N'dbo.CASE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE CASE(\n\t[Id] VARCHAR(255),\n\t[CaseNumber]VARCHAR(256),\n\t[AccountId]VARCHAR(256),\n\t[ParentId]VARCHAR(256),\n\t[Type]VARCHAR(256),\n\t[RecordTypeId]VARCHAR(256),\n\t[Status]VARCHAR(256),\n\t[Reason]VARCHAR(256),\n\t[Subject]VARCHAR(256),\n\t[IsClosed]VARCHAR(256),\n\t[ClosedDate]VARCHAR(256),\n\t[IsEscalated]VARCHAR(256),\n\t[OwnerId]VARCHAR(255),\n\t[CreatedDate]VARCHAR(256),\n\t[Fee__c]VARCHAR(256),\n\t[Industry_Sector__c]VARCHAR(256),\n\t[Other_Countries__c]VARCHAR(256),\n\t[Primary_Country__c]VARCHAR(256),\n\t[Record_Type__c]VARCHAR(256),\n\t[Record_type_selector__c]VARCHAR(256),\n\t[Request_Case_Removal__c]VARCHAR(256),\n\t[Actual_Create_Date__c]VARCHAR(256),\n\t[Actual_Case_Closed_Date__c]VARCHAR(256)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.TASK', N'U') IS NULL\nBEGIN\n\tCREATE TABLE TASK(\n\t[Id] VARCHAR(255),\n\t[RecordTypeId]VARCHAR(255),\n\t[WhoId]VARCHAR(255),\n\t[WhatId]VARCHAR(255),\n\t[Subject]VARCHAR(256),\n\t[ActivityDate]VARCHAR(256),\n\t[Status]VARCHAR(256),\n\t[Priority]VARCHAR(256),\n\t[IsHighPriority]VARCHAR(256),\n\t[OwnerId]VARCHAR(255),\n\t[IsDeleted]VARCHAR(256),\n\t[AccountId]VARCHAR(255),\n\t[IsClosed]VARCHAR(256),\n\t[CreatedDate]VARCHAR(256),\n\t[CreatedById]VARCHAR(255),\n\t[LastModifiedDate]VARCHAR(256),\n\t[LastModifiedById]VARCHAR(256),\n\t[SystemModstamp]VARCHAR(256),\n\t[IsArchived]VARCHAR(256),\n\t[TaskSubtype]VARCHAR(256),\n\t[Investment_Promotion__c]VARCHAR(256),\n\t[RH_Lev_1_GM_All__c]VARCHAR(256),\n\t[RH_Lev_2_DAS__c]VARCHAR(256),\n\t[RH_Lev_3_Region_2__c]VARCHAR(256),\n\t[RH_Lev_4_Region_1__c]VARCHAR(256),\n\t[RH_Lev_5_Country__c]VARCHAR(256),\n\t[RH_Lev_6_Office__c]VARCHAR(256),\n\t[RH_Lev_7_Individual__c]VARCHAR(256),\n\t[Related_to_Case__c]VARCHAR(256),\n\t[eMenu_ID_c__c]VARCHAR(256),\n\t[eMenu_Org_Name__c]VARCHAR(256),\n\t[Actual_Create_Date__c]VARCHAR(256)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.CASE_CONTRIBUTOR__C', N'U') IS NULL\nBEGIN\n\tCREATE TABLE CASE_CONTRIBUTOR__C(\n\t[Id] VARCHAR(255),\n\t[CreatedDate]VARCHAR(256),\n\t[CreatedById]VARCHAR(256),\n\t[LastModifiedDate]VARCHAR(256),\n\t[LastModifiedById]VARCHAR(256),\n\t[SystemModstamp]VARCHAR(256),\n\t[Case_ID__c]VARCHAR(256),\n\t[RH_Lev_6_Office__c]VARCHAR(256),\n\t[Contributor_Name__c]VARCHAR(256),\n\t[Contributor__c]VARCHAR(256),\n\t[RH_Lev_1_GM_All__c]VARCHAR(256),\n\t[RH_Lev_2_DAS__c]VARCHAR(256),\n\t[RH_Lev_3_Region_2__c]VARCHAR(256),\n\t[RH_Lev_4_Region_1__c]VARCHAR(256),\n\t[RH_Lev_5_Country__c]VARCHAR(256),\n\t[RH_Lev_7_Individual__c]VARCHAR(256)\n\t);\nEND\n\nIF OBJECT_ID(N'dbo.USER', N'U') IS NULL\nBEGIN\n\tCREATE TABLE USER( \n\t[Id] VARCHAR(255),\n\t[Username]VARCHAR(256),\n\t[LastName]VARCHAR(256),\n\t[FirstName]VARCHAR(256),\n\t[Name]VARCHAR(256),\n\t[CompanyName]VARCHAR(256),\n\t[Division]VARCHAR(256),\n\t[Department]VARCHAR(256),\n\t[Title]VARCHAR(256),\n\t[Street]VARCHAR(256),\n\t[City]VARCHAR(256),\n\t[State]VARCHAR(256),\n\t[PostalCode]VARCHAR(256),\n\t[Country]VARCHAR(256),\n\t[Alias]VARCHAR(256),\n\t[CommunityNickname]VARCHAR(256),\n\t[IsActive]VARCHAR(256),\n\t[UserRoleId]VARCHAR(256),\n\t[ProfileId]VARCHAR(256),\n\t[UserType]VARCHAR(256),\n\t);\nEND\n\n"
-                },
-                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/query/sql"
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('default'))},@{encodeURIComponent(encodeURIComponent('default'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForIndustryC')))}"
+              }
+            },
+            "Update_row_(V2)_4": {
+              "runAfter": {
+                "For_each_5": [
+                  "Succeeded"
+                ]
               },
-              "runAfter": {}
-            }
-          },
-          "parameters": {
-            "$connections": {
-              "defaultValue": {},
-              "type": "Object"
-            }
-          },
-          "triggers": {
-            "Recurrence": {
-              "type": "Recurrence",
-              "recurrence": {
-                "frequency": "Minute",
-                "interval": 3
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetcgModifyForUser')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForUsers')))}"
+              }
+            },
+            "Update_row_(V2)_5": {
+              "runAfter": {
+                "For_each_4": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetchModifyForTask')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForTask')))}"
+              }
+            },
+            "Update_row_(V2)_6": {
+              "runAfter": {
+                "For_each_6": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetchModifiedForCaseContributors')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForCaseContributors')))}"
+              }
+            },
+            "Update_row_(V2)_7": {
+              "runAfter": {
+                "For_each_7": [
+                  "Succeeded"
+                ]
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "body": {
+                  "TrackerValue": "@variables('LastFetchModifiedForCase')"
+                },
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sql_1']['connectionId']"
+                  }
+                },
+                "method": "patch",
+                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[TRACKER]'))}/items/@{encodeURIComponent(encodeURIComponent(variables('TrackerIdForCases')))}"
               }
             }
           },
-          "contentVersion": "1.0.0.0",
           "outputs": {}
         },
         "parameters": {
           "$connections": {
             "value": {
-              "sql_1": {
-                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('LogicAppLocation'), '/managedApis/', 'sql')]",
-                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('sql_1_Connection_Name'))]",
-                "connectionName": "[parameters('sql_1_Connection_Name')]"
-              },
               "salesforce": {
-                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('LogicAppLocation'), '/managedApis/', 'salesforce')]",
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'salesforce')]",
                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('salesforce_1_Connection_Name'))]",
                 "connectionName": "[parameters('salesforce_1_Connection_Name')]"
+              },
+              "sql_1": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'sql')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('sql_1_Connection_Name'))]",
+                "connectionName": "[parameters('sql_1_Connection_Name')]"
               }
             }
           }
@@ -697,8 +1242,8 @@
       },
       "apiVersion": "2016-06-01",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/connections', parameters('sql_1_Connection_Name'))]",
-        "[resourceId('Microsoft.Web/connections', parameters('salesforce_1_Connection_Name'))]"
+        "[resourceId('Microsoft.Web/connections', parameters('salesforce_1_Connection_Name'))]",
+        "[resourceId('Microsoft.Web/connections', parameters('sql_1_Connection_Name'))]"
       ]
     },
     {
