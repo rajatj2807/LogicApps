@@ -296,7 +296,7 @@
                 },
                 "method": "post",
                 "body": {
-                  "query": "IF OBJECT_ID(N'dbo.TRACKER', N'U') IS NULL\nBEGIN\n    CREATE TABLE TRACKER (\n\t\t[TrackerName] VARCHAR(255) PRIMARY KEY,\n\t\t[TrackerValue] VARCHAR(255)\n\t);\n\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('StandardLicense','0');\nEND\n\nIF OBJECT_ID(N'dbo.TRACKER', N'U') IS NOT NULL\nBEGIN\n\tIF NOT EXISTS (SELECT * FROM dbo.TRACKER WHERE TrackerName = N'StandardLicense')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('StandardLicense','0');\n\tEND\nEND"
+                  "query": "IF OBJECT_ID(N'dbo.TRACKER', N'U') IS NULL\nBEGIN\n    CREATE TABLE TRACKER (\n\t\t[TrackerName] VARCHAR(255) PRIMARY KEY,\n\t\t[TrackerValue] VARCHAR(255)\n\t);\n\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('StandardLicense','0');\nEND\n\nIF OBJECT_ID(N'dbo.TRACKER', N'U') IS NOT NULL\nBEGIN\n\tIF NOT EXISTS (SELECT * FROM dbo.TRACKER WHERE TrackerName = N'StandardLicense')\n\tBEGIN\n\t\tINSERT INTO TRACKER(TrackerName,TrackerValue) VALUES ('StandardLicense','0');\n\tEND\nEND\n\nIF OBJECT_ID(N'dbo.SIMA_STANDARD_STEEL_LICENSE', N'U') IS NULL\nBEGIN\n\tCREATE TABLE SIMA_STANDARD_STEEL_LICENSE (\n\t[Account_ID] INTEGER,\n\t[ExpirationDate] DATE,\n\t[LicenseNumber] VARCHAR(255),\n\t[ApplicationDate] DATE,\n\t[HTS Code] VARCHAR(255),\n\t[ValidFromDate] DATE,\n\t[Title] VARCHAR(255),\n\t[JsonData] VARCHAR(MAX),\n\t[LicenseStatus] VARCHAR(255)\n\t);\nEND\n"
                 },
                 "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/query/sql"
               },
