@@ -2,28 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "salesforce_1_Connection_Name": {
-      "type": "string",
-      "defaultValue": "salesforce"
-    },
-    "salesforce_1_Connection_DisplayName": {
-      "type": "string",
-      "defaultValue": "Salesforce"
-    },
-    "salesforce_1_token:LoginUri": {
-      "type": "string",
-      "metadata": {
-        "description": "The Salesforce Login URI. For Production, leave blank or use https://login.salesforce.com"
-      },
-      "defaultValue": "https://test.salesforce.com"
-    },
-    "salesforce_1_salesforceApiVersion": {
-      "type": "string",
-      "metadata": {
-        "description": "The Salesforce API Version. For default, leave blank or use v41.0"
-      },
-      "defaultValue": "v41"
-    },
     "sql_1_Connection_Name": {
       "type": "string",
       "defaultValue": "sql-1"
@@ -63,6 +41,28 @@
       "metadata": {
         "description": "SQL Connection String"
       }
+    },
+    "salesforce_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "salesforce"
+    },
+    "salesforce_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "Salesforce"
+    },
+    "salesforce_1_token:LoginUri": {
+      "type": "string",
+      "metadata": {
+        "description": "The Salesforce Login URI. For Production, leave blank or use https://login.salesforce.com"
+      },
+      "defaultValue": "https://test.salesforce.com"
+    },
+    "salesforce_1_salesforceApiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The Salesforce API Version. For default, leave blank or use v41.0"
+      },
+      "defaultValue": "v41"
     },
     "LogicAppLocation": {
       "type": "string",
@@ -127,7 +127,7 @@
             "Recurrence": {
               "recurrence": {
                 "frequency": "Minute",
-                "interval": 3
+                "interval": 5
               },
               "type": "Recurrence"
             }
@@ -652,48 +652,12 @@
             "For_each_9": {
               "foreach": "@body('Get_records_2')?['value']",
               "actions": {
-                "Insert_row_(V2)_11": {
+                "Execute_a_SQL_query_(V2)": {
                   "runAfter": {},
                   "type": "ApiConnection",
                   "inputs": {
                     "body": {
-                      "Account_Type__c": "@{items('For_each_9')?['Account_Type__c']}",
-                      "Actual_Create_Date__c": "@items('For_each_9')?['Actual_Create_Date__c']",
-                      "AnnualRevenue": "@{items('For_each_9')?['AnnualRevenue']}",
-                      "Associated_Business_Names__c": "@items('For_each_9')?['Associated_Business_Names__c']",
-                      "BillingCity": "@items('For_each_9')?['BillingCity']",
-                      "BillingCountry": "@items('For_each_9')?['BillingCountry']",
-                      "BillingCountryCode": "@items('For_each_9')?['BillingCountryCode']",
-                      "BillingGeocodeAccuracy": "@items('For_each_9')?['BillingGeocodeAccuracy']",
-                      "BillingLatitude": "@{items('For_each_9')?['BillingLatitude']}",
-                      "BillingLongitude": "@{items('For_each_9')?['BillingLongitude']}",
-                      "BillingPostalCode": "@items('For_each_9')?['BillingPostalCode']",
-                      "BillingState": "@items('For_each_9')?['BillingState']",
-                      "BillingStreet": "@{items('For_each_9')?['BillingStreet']}",
-                      "Congressional_District_formula__c": "@items('For_each_9')?['Congressional_District_formula__c']",
-                      "County_Name__c": "@items('For_each_9')?['County_Name__c']",
-                      "CreatedById": "@items('For_each_9')?['CreatedById']",
-                      "CreatedDate": "@items('For_each_9')?['CreatedDate']",
-                      "Id": "@{items('For_each_9')?['Id']}",
-                      "Industries__c": "@{items('For_each_9')?['Industries__c']}",
-                      "Industry": "@items('For_each_9')?['Industry']",
-                      "Is_Holding__c": "@{items('For_each_9')?['Is_Holding__c']}",
-                      "Is_Subsidiary__c": "@{items('For_each_9')?['Is_Subsidiary__c']}",
-                      "Local_ITA_Office__c": "@items('For_each_9')?['Local_ITA_Office__c']",
-                      "NAICS_Code__c": "@items('For_each_9')?['NAICS_Code__c']",
-                      "Name": "@{items('For_each_9')?['Name']}",
-                      "NumberOfEmployees": "@{items('For_each_9')?['NumberOfEmployees']}",
-                      "OwnerId": "@{items('For_each_9')?['OwnerId']}",
-                      "Owner_Office__c": "@items('For_each_9')?['Owner_Office__c']",
-                      "ParentId": "@{items('For_each_9')?['ParentId']}",
-                      "RecordTypeId": "@items('For_each_9')?['RecordTypeId']",
-                      "SME__c": "@{items('For_each_9')?['SME__c']}",
-                      "SicDesc": "@items('For_each_9')?['SicDesc']",
-                      "State_Code__c": "@items('For_each_9')?['State_Code__c']",
-                      "TracHier__DUNS_Global_Ultimate_Parent__c": "@items('For_each_9')?['TracHier__DUNS_Global_Ultimate_Parent__c']",
-                      "Validated__c": "@{items('For_each_9')?['Validated__c']}",
-                      "eMenu_ES_ID__c": "@items('For_each_9')?['eMenu_ES_ID__c']",
-                      "eMenu_Org_Name__c": "@items('For_each_9')?['eMenu_Org_Name__c']"
+                      "query": "INSERT INTO dbo.ORGANIZATION \n(\nAccount_Type__c,\nActual_Create_Date__c,AnnualRevenue, Associated_Business_Names__c, BillingCity,\tBillingCountry,\tBillingCountryCode, \n\tBillingGeocodeAccuracy,\tBillingLatitude,BillingLongitude, \tBillingPostalCode,BillingState,\tBillingStreet,  \n\tCongressional_District_formula__c, \tCounty_Name__c, \tCreatedById, \tCreatedDate,\tIndustry,\tIndustries__c,\n\tId,\tIs_Holding__c, \tIs_Subsidiary__c, \tLocal_ITA_Office__c,\tNAICS_Code__c, \tNumberOfEmployees, \tName,\tOwnerId,\tOwner_Office__c, \tParentId,RecordTypeId,\tSME__c,\n\tSicDesc,State_Code__c,\tTracHier__DUNS_Global_Ultimate_Parent__c, \tValidated__c, \teMenu_ES_ID__c,\teMenu_Org_Name__c \n)\nVALUES\n(\n\t'@{replace(string(items('For_each_9')?['Account_Type__c']),'''','''''')}',\n\t'@{replace(string(items('For_each_9')?['Actual_Create_Date__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['AnnualRevenue']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['Associated_Business_Names__c']),'''','''''')}',\n '@{replace(string(items('For_each_9')?['BillingCity']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingCountry']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingCountryCode']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingGeocodeAccuracy']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingLatitude']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingLongitude']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingPostalCode']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingState']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['BillingStreet']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['Congressional_District_formula__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['County_Name__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['CreatedById']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['CreatedDate']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['Industry']),'''','''''')}',\n'',\n'@{replace(string(items('For_each_9')?['Id']),'''','''''')}',\n '@{replace(string(items('For_each_9')?['Is_Holding__c']),'''','''''')}',\n   '@{replace(string(items('For_each_9')?['Is_Subsidiary__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['Local_ITA_Office__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['NAICS_Code__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['NumberOfEmployees']),'''','''''')}',\n  '@{replace(string(items('For_each_9')?['Name']),'''','''''')}',\n    '@{replace(string(items('For_each_9')?['OwnerId']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['Owner_Office__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['ParentId']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['RecordTypeId']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['SME__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['SicDesc']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['State_Code__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['TracHier__DUNS_Global_Ultimate_Parent__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['Validated__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['eMenu_ES_ID__c']),'''','''''')}',\n'@{replace(string(items('For_each_9')?['eMenu_Org_Name__c']),'''','''''')}'\n);\n"
                     },
                     "host": {
                       "connection": {
@@ -701,68 +665,12 @@
                       }
                     },
                     "method": "post",
-                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[ORGANIZATION]'))}/items"
-                  }
-                },
-                "Insert_row_(V2)_8": {
-                  "runAfter": {
-                    "Insert_row_(V2)_11": [
-                      "Succeeded"
-                    ]
-                  },
-                  "type": "ApiConnection",
-                  "inputs": {
-                    "body": {
-                      "Account_Type__c": "@{items('For_each_9')?['Account_Type__c']}",
-                      "Actual_Create_Date__c": "@items('For_each_9')?['Actual_Create_Date__c']",
-                      "AnnualRevenue": "@{items('For_each_9')?['AnnualRevenue']}",
-                      "Associated_Business_Names__c": "@items('For_each_9')?['Associated_Business_Names__c']",
-                      "BillingCity": "@items('For_each_9')?['BillingCity']",
-                      "BillingCountry": "@items('For_each_9')?['BillingCountry']",
-                      "BillingCountryCode": "@items('For_each_9')?['BillingCountryCode']",
-                      "BillingGeocodeAccuracy": "@items('For_each_9')?['BillingGeocodeAccuracy']",
-                      "BillingLatitude": "@{items('For_each_9')?['BillingLatitude']}",
-                      "BillingLongitude": "@{items('For_each_9')?['BillingLongitude']}",
-                      "BillingPostalCode": "@items('For_each_9')?['BillingPostalCode']",
-                      "BillingState": "@items('For_each_9')?['BillingState']",
-                      "BillingStreet": "@{items('For_each_9')?['BillingStreet']}",
-                      "Congressional_District_formula__c": "@items('For_each_9')?['Congressional_District_formula__c']",
-                      "County_Name__c": "@items('For_each_9')?['County_Name__c']",
-                      "CreatedById": "@items('For_each_9')?['CreatedById']",
-                      "CreatedDate": "@items('For_each_9')?['CreatedDate']",
-                      "Id": "@{items('For_each_9')?['Id']}",
-                      "Industries__c": "@{items('For_each_9')?['Industries__c']}",
-                      "Industry": "@items('For_each_9')?['Industry']",
-                      "Is_Holding__c": "@{items('For_each_9')?['Is_Holding__c']}",
-                      "Is_Subsidiary__c": "@{items('For_each_9')?['Is_Subsidiary__c']}",
-                      "Local_ITA_Office__c": "@items('For_each_9')?['Local_ITA_Office__c']",
-                      "NAICS_Code__c": "@items('For_each_9')?['NAICS_Code__c']",
-                      "Name": "@{items('For_each_9')?['Name']}",
-                      "NumberOfEmployees": "@{items('For_each_9')?['NumberOfEmployees']}",
-                      "OwnerId": "@{items('For_each_9')?['OwnerId']}",
-                      "Owner_Office__c": "@items('For_each_9')?['Owner_Office__c']",
-                      "ParentId": "@{items('For_each_9')?['ParentId']}",
-                      "RecordTypeId": "@items('For_each_9')?['RecordTypeId']",
-                      "SME__c": "@{items('For_each_9')?['SME__c']}",
-                      "SicDesc": "@items('For_each_9')?['SicDesc']",
-                      "State_Code__c": "@items('For_each_9')?['State_Code__c']",
-                      "TracHier__DUNS_Global_Ultimate_Parent__c": "@items('For_each_9')?['TracHier__DUNS_Global_Ultimate_Parent__c']",
-                      "Validated__c": "@{items('For_each_9')?['Validated__c']}",
-                      "eMenu_ES_ID__c": "@items('For_each_9')?['eMenu_ES_ID__c']",
-                      "eMenu_Org_Name__c": "@items('For_each_9')?['eMenu_Org_Name__c']"
-                    },
-                    "host": {
-                      "connection": {
-                        "name": "@parameters('$connections')['sql_1']['connectionId']"
-                      }
-                    },
-                    "method": "post",
-                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/tables/@{encodeURIComponent(encodeURIComponent('[dbo].[ORGANIZATION]'))}/items"
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('inta-sqla-01.database.windows.net'))},@{encodeURIComponent(encodeURIComponent('Inta-dataloader-01'))}/query/sql"
                   }
                 },
                 "Set_variable_9": {
                   "runAfter": {
-                    "Insert_row_(V2)_8": [
+                    "Execute_a_SQL_query_(V2)": [
                       "Succeeded"
                     ]
                   },
@@ -1648,22 +1556,6 @@
     {
       "type": "MICROSOFT.WEB/CONNECTIONS",
       "apiVersion": "2018-07-01-preview",
-      "name": "[parameters('salesforce_1_Connection_Name')]",
-      "location": "eastus",
-      "properties": {
-        "api": {
-          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'salesforce')]"
-        },
-        "displayName": "[parameters('salesforce_1_Connection_DisplayName')]",
-        "nonSecretParameterValues": {
-          "token:LoginUri": "[parameters('salesforce_1_token:LoginUri')]",
-          "salesforceApiVersion": "[parameters('salesforce_1_salesforceApiVersion')]"
-        }
-      }
-    },
-    {
-      "type": "MICROSOFT.WEB/CONNECTIONS",
-      "apiVersion": "2018-07-01-preview",
       "name": "[parameters('sql_1_Connection_Name')]",
       "location": "eastus",
       "properties": {
@@ -1677,6 +1569,22 @@
           "username": "[parameters('sql_1_username')]",
           "password": "[parameters('sql_1_password')]",
           "sqlConnectionString": "[parameters('sql_1_sqlConnectionString')]"
+        }
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "[parameters('salesforce_1_Connection_Name')]",
+      "location": "eastus",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', 'eastus', '/managedApis/', 'salesforce')]"
+        },
+        "displayName": "[parameters('salesforce_1_Connection_DisplayName')]",
+        "nonSecretParameterValues": {
+          "token:LoginUri": "[parameters('salesforce_1_token:LoginUri')]",
+          "salesforceApiVersion": "[parameters('salesforce_1_salesforceApiVersion')]"
         }
       }
     }
